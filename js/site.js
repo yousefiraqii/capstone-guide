@@ -93,7 +93,7 @@
           entry.target.classList.add('visible');
           revealObserver.unobserve(entry.target);
         });
-      }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+      }, { threshold: 0, rootMargin: '0px 0px -6% 0px' });
       root.classList.add('motion-ready');
       revealElements.forEach((element) => revealObserver.observe(element));
     } catch {
