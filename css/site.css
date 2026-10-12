@@ -51,6 +51,7 @@ html{scroll-padding-top:6.5rem}
   .pub-toc:hover a,.pub-toc:focus-within a{max-height:4rem;opacity:1;padding:.48rem .55rem}
   .pub-toc a.active,.pub-toc a:hover{color:var(--gold);background:rgba(200,169,81,.1);border-left-color:var(--gold)}
 }
+.portfolio-page .chapter-body,.poster-page .chapter-body{width:100%;max-width:none}
 .portfolio-toc-section .chapter-body{max-width:1040px}
 .portfolio-toc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:1.5rem}
 .toc-card,.toc-group{min-width:0;padding:1.1rem 1.2rem;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,rgba(36,59,83,.88),rgba(36,59,83,.48))}

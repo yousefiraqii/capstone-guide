@@ -234,7 +234,7 @@ test('shared browser behavior', async (t) => {
   });
 
   await t.test('lightbox opens by mouse and keyboard, closes, and restores focus', () => {
-    const { dom, window } = createPage('portfolio-final.html');
+    const { dom, window } = createPage('portfolio.html');
     const image = window.document.querySelector('img[data-zoom]');
     const dialog = window.document.querySelector('dialog.lightbox');
     assert.ok(image);
@@ -255,7 +255,7 @@ test('shared browser behavior', async (t) => {
   });
 
   await t.test('guide page creates functional section shortcuts and highlights the visible section', () => {
-    const { dom, window, observers } = createPage('portfolio-final.html', { observe: true });
+    const { dom, window, observers } = createPage('portfolio.html', { observe: true });
     const targets = window.document.querySelectorAll('.portfolio-page .chapter[id^="part-"]');
     const toc = window.document.querySelector('.pub-toc');
     assert.ok(toc);
@@ -271,7 +271,7 @@ test('shared browser behavior', async (t) => {
   });
 
   await t.test('section shortcuts still render without IntersectionObserver', () => {
-    const { dom, window } = createPage('poster-final.html');
+    const { dom, window } = createPage('poster.html');
     const toc = window.document.querySelector('.pub-toc');
     assert.ok(toc);
     assert.ok(toc.querySelectorAll('a').length > 0);
@@ -279,7 +279,7 @@ test('shared browser behavior', async (t) => {
   });
 
   await t.test('timeline highlights one active milestone as the reader advances', () => {
-    const { dom, window, observers } = createPage('time-frame-final.html', { observe: true });
+    const { dom, window, observers } = createPage('time-frame.html', { observe: true });
     const weeks = [...window.document.querySelectorAll('.time-frame-page .week')];
     const timelineObserver = observers.at(-1);
     timelineObserver.trigger(weeks[0]);
