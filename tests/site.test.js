@@ -145,6 +145,16 @@ test('site structure and deployment assets', async (t) => {
     assert.match(values['content-security-policy'], /https:\/\/fonts\.googleapis\.com/);
     assert.match(values['content-security-policy'], /https:\/\/fonts\.gstatic\.com/);
   });
+
+  await t.test('motion styles define cross-page transitions, shared timings, and reduced-motion overrides', () => {
+    const css = fs.readFileSync(path.join(ROOT, 'css/site.css'), 'utf8');
+    assert.match(css, /@view-transition\s*\{\s*navigation\s*:\s*auto/);
+    assert.match(css, /--motion-ease\s*:\s*cubic-bezier\(\.22,1,\.36,1\)/);
+    assert.match(css, /--motion-exit\s*:\s*250ms/);
+    assert.match(css, /--motion-enter\s*:\s*350ms/);
+    assert.match(css, /prefers-reduced-motion\s*:\s*reduce/);
+    assert.match(css, /scroll-margin-top/);
+  });
 });
 
 test('shared browser behavior', async (t) => {
@@ -174,12 +184,13 @@ test('shared browser behavior', async (t) => {
     dom.window.close();
   });
 
-  await t.test('scroll state updates progress, sticky header, and back-to-top visibility', () => {
+  await t.test('scroll state updates progress, sticky header, and back-to-top visibility', async () => {
     const { dom, window } = createPage('index.html');
     Object.defineProperty(window.document.documentElement, 'scrollHeight', { configurable: true, value: 2000 });
     Object.defineProperty(window, 'innerHeight', { configurable: true, value: 1000 });
     Object.defineProperty(window, 'scrollY', { configurable: true, value: 800 });
     window.dispatchEvent(new window.Event('scroll'));
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
     assert.equal(window.document.querySelector('.progress').style.transform, 'scaleX(0.8)');
     assert.ok(window.document.querySelector('.site-header').classList.contains('scrolled'));
     assert.ok(window.document.querySelector('.back-top').classList.contains('show'));
@@ -190,6 +201,35 @@ test('shared browser behavior', async (t) => {
   await t.test('reduced-motion fallback immediately reveals animated content', () => {
     const { dom, window } = createPage('index.html');
     assert.ok(window.document.querySelector('.reveal').classList.contains('visible'));
+    dom.window.close();
+  });
+
+  await t.test('same-page anchors scroll with reduced-motion settings and preserve modified clicks', () => {
+    const { dom, window } = createPage('index.html');
+    const target = window.document.querySelector('#authors');
+    let scrollBehavior;
+    target.scrollIntoView = (options) => { scrollBehavior = options.behavior; };
+    const anchor = window.document.querySelector('a[href="#authors"]');
+    const regularClick = new window.MouseEvent('click', { bubbles: true, cancelable: true });
+    anchor.dispatchEvent(regularClick);
+    assert.equal(regularClick.defaultPrevented, true);
+    assert.equal(scrollBehavior, 'auto');
+
+    const modifiedClick = new window.MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true });
+    anchor.dispatchEvent(modifiedClick);
+    assert.equal(modifiedClick.defaultPrevented, false);
+    dom.window.close();
+  });
+
+  await t.test('scroll reveals start only after motion setup and reveal once when intersecting', () => {
+    const { dom, window, observers } = createPage('index.html', { observe: true });
+    const target = window.document.querySelector('.authors-grid .author-card');
+    const revealObserver = observers[0];
+    assert.ok(window.document.documentElement.classList.contains('motion-ready'));
+    assert.equal(target.classList.contains('visible'), false);
+    revealObserver.trigger(target);
+    assert.equal(target.classList.contains('visible'), true);
+    assert.equal(revealObserver.targets.includes(target), false);
     dom.window.close();
   });
 
@@ -235,6 +275,18 @@ test('shared browser behavior', async (t) => {
     const toc = window.document.querySelector('.pub-toc');
     assert.ok(toc);
     assert.ok(toc.querySelectorAll('a').length > 0);
+    dom.window.close();
+  });
+
+  await t.test('timeline highlights one active milestone as the reader advances', () => {
+    const { dom, window, observers } = createPage('time-frame-final.html', { observe: true });
+    const weeks = [...window.document.querySelectorAll('.time-frame-page .week')];
+    const timelineObserver = observers.at(-1);
+    timelineObserver.trigger(weeks[0]);
+    assert.equal(weeks[0].classList.contains('is-active'), true);
+    timelineObserver.trigger(weeks[1]);
+    assert.equal(weeks[0].classList.contains('is-active'), false);
+    assert.equal(weeks[1].classList.contains('is-active'), true);
     dom.window.close();
   });
 });
