@@ -1,0 +1,12 @@
+{
+  "name": "capstone-guide-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static Capstone student guide website",
+  "scripts": {
+    "test": "node --test tests/site.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^27.4.0"
+  }
+}
