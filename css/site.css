@@ -116,7 +116,7 @@ html{scroll-padding-top:6.5rem}
 .journal-page .jg ul.en,.journal-page .jg ol.en{border:0;padding-left:1.4rem}
 .journal-page .jg h3{margin:1.7rem 0 .7rem;padding-bottom:.45rem;border-bottom:1px solid var(--line);color:var(--gold);font:600 1.05rem/1.45 var(--sans);letter-spacing:0}
 .journal-page .jg li{line-height:1.7;margin-bottom:.65rem}
-@media(max-width:760px){.journal-page .chapter{padding:2rem 0}.journal-page .chapter-head{grid-template-columns:minmax(0,1fr);gap:.35rem}.journal-page .chapter-num{padding-top:0}.journal-page .chapter-body.jg{max-width:none}}
+@media(max-width:760px){.journal-page .chapter{padding:2rem 0}.journal-page .chapter-head{grid-template-columns:minmax(0,1fr);gap:.35rem}.journal-page .chapter-num{padding-top:0}.journal-page .chapter-body.jg{max-width:none}.journal-page .jg p.en{margin-left:0;width:100%}}
 .logbook-page .chapter-body h2{display:flex;align-items:center;gap:1rem;margin:0 0 1.2rem;padding:1rem 1.2rem;border:1px solid var(--line);border-right:3px solid var(--gold);border-radius:12px;background:linear-gradient(145deg,rgba(36,59,83,.9),rgba(36,59,83,.48));font:600 1.05rem/1.4 var(--sans);letter-spacing:0}
 .logbook-page #logbook-weekly h2::before,.logbook-page #logbook-parts h2::before,.logbook-page #logbook-guidance h2::before,.logbook-page #logbook-problems h2::before{flex:none;color:var(--gold);font:500 .68rem/1.4 var(--mono);letter-spacing:.12em}
 .logbook-page #logbook-weekly h2::before{content:"05.01"}.logbook-page #logbook-parts h2::before{content:"05.02"}.logbook-page #logbook-guidance h2::before{content:"05.03"}.logbook-page #logbook-problems h2::before{content:"05.04"}
@@ -184,4 +184,51 @@ html.motion-ready .reveal:not(.visible){opacity:0;transform:translateY(var(--mot
   .page-leave{opacity:1;transform:none;transition:none}
   .time-frame-page .week::before{transform:scaleY(1);transition:none}
   .nav-links a[aria-current="page"]::after{animation:none}
+}
+
+/* Responsive audit fixes: keep document content inside its grid and viewport. */
+.hero{background-repeat:no-repeat}
+.hero-actions,.chapter-body,.chapter-head{min-width:0}
+.hero-actions>.button{flex:0 1 auto;min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center}
+.chapter-head{grid-template-columns:100px minmax(0,1fr)}
+.chapter-body{min-width:0}
+.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+img,video,iframe{max-width:100%}
+:where(p,li,td,th){overflow-wrap:anywhere}
+.menu-toggle{width:44px;min-width:44px;min-height:44px;padding:.5rem}
+.brand{min-height:44px}
+.nav-links a{min-height:44px;display:inline-flex;align-items:center}
+
+@media(max-width:680px){
+  .menu-toggle{display:block}
+  .nav-links{max-width:88vw;overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(2rem,env(safe-area-inset-bottom))}
+  .grid-3,.grid-2{grid-template-columns:minmax(0,1fr)}
+  .bilingual{grid-template-columns:minmax(0,1fr);gap:.85rem}
+  .chapter-head{grid-template-columns:minmax(0,1fr);gap:.35rem}
+  .chapter-num{padding-top:0}
+  .chapter-body{width:100%;max-width:none}
+  .page-hero{padding:8rem 0 3rem}
+  .hero{min-height:100svh;padding:7rem 0 max(3rem,env(safe-area-inset-bottom));background-size:cover;background-position:50% 58%}
+  .hero-content{width:calc(100% - 2*var(--gutter));max-width:none;margin-inline:auto}
+  .hero h1{font-size:clamp(2rem,8vw,3rem);margin:1rem 0}
+  .hero .lead{max-width:100%;font-size:1rem;line-height:1.65;padding:.65rem .8rem}
+  .hero-ar{max-width:100%;padding:.75rem .85rem;margin-top:.85rem}
+  .hero-actions{gap:.65rem;margin-top:1.2rem}
+  .hero-actions .button{flex:1 1 100%;width:100%;min-height:48px}
+  .scroll-note{margin-top:1.5rem}
+  .footer-top,.footer-bottom{flex-direction:column;align-items:flex-start;gap:1.1rem}
+  .footer-bottom{margin-top:1.5rem}
+  .poster-contents-grid,.portfolio-toc-grid,.portfolio-requirements,.journal-contents-grid{grid-template-columns:minmax(0,1fr)}
+}
+
+@media(max-width:360px){
+  :root{--gutter:1rem}
+  .site-header{padding-inline:var(--gutter)}
+  .hero h1{font-size:2.25rem}
+  .author-card{grid-template-columns:minmax(96px,36%) minmax(0,1fr)}
+}
+
+@media(max-width:760px){
+  .journal-page .jg{min-width:0;max-width:100%;margin-inline:0}
+  .journal-page .jg p.en{width:100%!important;margin-left:0!important}
 }
