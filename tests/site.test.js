@@ -107,6 +107,24 @@ test('site structure and deployment assets', async (t) => {
     }
   });
 
+  await t.test('GA4 is configured on every page and allowed by the deployment CSP', () => {
+    for (const pageName of PAGE_FILES) {
+      const dom = new JSDOM(readPage(pageName));
+      assert.equal(dom.window.document.querySelectorAll('script[src="js/analytics.js"]').length, 1, `${pageName} should include analytics once`);
+      dom.window.close();
+    }
+
+    const analytics = fs.readFileSync(path.join(ROOT, 'js/analytics.js'), 'utf8');
+    assert.match(analytics, /G-ZS8HCSSSW3/);
+    assert.match(analytics, /gtag\('config',\s*measurementId\)/);
+
+    const config = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+    const csp = config.headers.flatMap((rule) => rule.headers)
+      .find(({ key }) => key.toLowerCase() === 'content-security-policy')?.value || '';
+    assert.match(csp, /script-src[^;]*https:\/\/www\.googletagmanager\.com/);
+    assert.match(csp, /connect-src[^;]*https:\/\/\*\.google-analytics\.com/);
+  });
+
   await t.test('new-window links protect the opener and no javascript URLs are present', () => {
     for (const pageName of PAGE_FILES) {
       const dom = new JSDOM(readPage(pageName));
